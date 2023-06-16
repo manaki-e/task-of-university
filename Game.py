@@ -30,7 +30,9 @@ class TwoPlayersGame:
     # ==========================================================================
     # ===== [メソッド] 対戦する =====
     # ==========================================================================
-    def play( self, nmoves=1000, verbose=True ):
+    # =========== 自分の手番を記録した変数を渡す（変更） =============
+    def play( self, nmoves=1000, verbose=True, move_list=[] ):
+    # ===================================================
         """ .
         """
         # ======================================================================
@@ -45,13 +47,23 @@ class TwoPlayersGame:
             if self.is_over():
                 break
             # ==================================================================
-            move = self.player.ask_move( self )
-            history.append( ( deepcopy( self ), move ) )
-            self.make_move( move )
+            # =========== 自分の手番を再現して入力する（変更） =============
+            if self.nmove <= 2 * len( move_list ) - 1:
+                move = self.player.ask_move( self, move_list[ int( ( self.nmove - 1 ) / 2 ) ] )
+                history.append( ( deepcopy( self ), move ) )
+                self.make_move( move )
+            else:
+                move = self.player.ask_move( self )
+                history.append( ( deepcopy( self ), move ) )
+                self.make_move( move )
+                break
+            # ===================================================
             # ==================================================================
             if verbose:
-                print( "\nMove #%d: player %d plays %s :" % (
-                      self.nmove, self.nplayer, str(move)))
+                # =========== GUIがあるため、盤面を表示しない（追加） =============
+                # print( "\nMove #%d: player %d plays %s :" % (
+                #       self.nmove, self.nplayer, str(move)))
+                # ===================================================
                 self.show()
             # ==================================================================
             self.switch_player()
