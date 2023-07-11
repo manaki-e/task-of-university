@@ -30,7 +30,7 @@ class TwoPlayersGame:
     # ==========================================================================
     # ===== [メソッド] 対戦する =====
     # ==========================================================================
-    def play( self, nmoves=1000, verbose=True ):
+    def play( self, nmoves=1000, verbose=True, move_list=[] ):
         """ .
         """
         # ======================================================================
@@ -45,13 +45,19 @@ class TwoPlayersGame:
             if self.is_over():
                 break
             # ==================================================================
-            move = self.player.ask_move( self )
-            history.append( ( deepcopy( self ), move ) )
-            self.make_move( move )
+            if self.nmove <= 2 * len( move_list ) - 1:
+                move = self.player.ask_move( self, move_list[ int( ( self.nmove - 1 ) / 2 ) ] )
+                history.append( ( deepcopy( self ), move ) )
+                self.make_move( move )
+            else:
+                move = self.player.ask_move( self )
+                history.append( ( deepcopy( self ), move ) )
+                self.make_move( move )
+                break
             # ==================================================================
             if verbose:
-                print( "\nMove #%d: player %d plays %s :" % (
-                      self.nmove, self.nplayer, str(move)))
+#                 print( "\nMove #%d: player %d plays %s :" % (
+#                       self.nmove, self.nplayer, str(move)))
                 self.show()
             # ==================================================================
             self.switch_player()

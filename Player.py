@@ -43,7 +43,7 @@ class Human_Player:
     # ==========================================================================
     # ===== [メソッド] 次に打つ手を尋ねる  =====================================
     # ==========================================================================
-    def ask_move( self, game ):
+    def ask_move( self, game, number=0 ):
         """ 次に打つ手を尋ねる.
         """
         # ======================================================================
@@ -52,23 +52,26 @@ class Human_Player:
         possible_moves_str = list(map(str, game.possible_moves()))
         move = "NO_MOVE_DECIDED_YET"
         while True:
-            move = input("\nPlayer %s what do you play ? "%(game.nplayer))
-            if move == 'show moves':
-                print ("Possible moves:\n"+ "\n".join(
-                       ["#%d: %s"%(i+1,m) for i,m in enumerate(possible_moves)])
-                       +"\nType a move or type 'move #move_number' to play.")
+            if number == 0:
+                move = input("\nPlayer %s what do you play ? "%(game.nplayer))
+                if move == 'show moves':
+                    print ("Possible moves:\n"+ "\n".join(
+                           ["#%d: %s"%(i+1,m) for i,m in enumerate(possible_moves)])
+                           +"\nType a move or type 'move #move_number' to play.")
 
-            elif move == 'quit':
-                raise KeyboardInterrupt
+                elif move == 'quit':
+                    raise KeyboardInterrupt
 
-            elif move.startswith("move #"):
-                # Fetch the corresponding move and return.
-                move = possible_moves[int(move[6:])-1]
-                return move
+                elif move.startswith("move #"):
+                    # Fetch the corresponding move and return.
+                    move = possible_moves[int(move[6:])-1]
+                    return move
 
-            elif str(move) in possible_moves_str:
-                # Transform the move into its real type (integer, etc. and return).
-                move = possible_moves[possible_moves_str.index(str(move))]
+                elif str(move) in possible_moves_str:
+                    # Transform the move into its real type (integer, etc. and return).
+                    move = possible_moves[possible_moves_str.index(str(move))]
+            else:
+                move = possible_moves[possible_moves_str.index(str(number))]
                 return move
         # ======================================================================
 
@@ -98,7 +101,7 @@ class AI_Player:
     # ==========================================================================
     # ===== [メソッド] 次に打つ手を尋ねる  =====================================
     # ==========================================================================
-    def ask_move( self, game ):
+    def ask_move( self, game, number=0 ):
         """ 次に打つ手を尋ねる.
         """
         # ======================================================================

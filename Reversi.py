@@ -28,8 +28,8 @@ from Negamax  import Negamax
 # ==============================================================================
 
 # ==============================================================================
-to_string = lambda a : "ABCDEFGH"[a[0]] + str(a[1]+1)
-to_array  = lambda s : np.array(["ABCDEFGH".index(s[0]),int(s[1])-1])
+to_string = lambda a : "ABCDEF"[a[0]] + str(a[1]+1)
+to_array  = lambda s : np.array(["ABCDEF".index(s[0]),int(s[1])-1])
 # ==============================================================================
  
 # ==============================================================================
@@ -51,10 +51,10 @@ class Reversi( TwoPlayersGame ):
         # ===== プレイヤーのリスト
         self.players = players
         # ===== ボード (8x8)
-        self.board = np.zeros( (8,8), dtype=int )
+        self.board = np.zeros( (6,6), dtype=int )
         # ===== 初期配置
-        self.board[3,[3,4]] = [1,2]
-        self.board[4,[3,4]] = [2,1]
+        self.board[2,[2,3]] = [1,2]
+        self.board[3,[2,3]] = [2,1]
         # ===== 手番
         self.nplayer = 1
         # ======================================================================
@@ -67,7 +67,7 @@ class Reversi( TwoPlayersGame ):
         """ 次に打つことが可能な手のリストを返す.
         """
         # ======================================================================
-        return [to_string((i,j)) for i in range(8) for j in range(8)
+        return [to_string((i,j)) for i in range(6) for j in range(6)
             if (self.board[i,j] == 0)
             and (pieces_flipped(self.board, (i,j), self.nplayer) != [])]
         # ======================================================================
@@ -93,9 +93,7 @@ class Reversi( TwoPlayersGame ):
         """ .
         """
         # ======================================================================
-        print('\n'+'\n'.join(['  1 2 3 4 5 6 7 8']+ ['ABCDEFGH'[k] +
-                ' '+' '.join([['.','1','2','X'][self.board[k][i]]
-                for i in range(8)]) for k in range(8)]+['']))
+        return
         # ======================================================================
   
     # ==========================================================================
@@ -115,7 +113,7 @@ class Reversi( TwoPlayersGame ):
         """ 評価値 .
         """
         # ======================================================================
-        if np.sum(self.board==0) > 32: # less than half the board is full
+        if np.sum(self.board==0) > 18: # less than half the board is full
 
             player   = self.board==self.nplayer
             opponent = self.board==self.nopponent
@@ -132,14 +130,12 @@ class Reversi( TwoPlayersGame ):
 
 # ==============================================================================
 # This board is used by the AI to give more importance to the border
-BOARD_SCORE = np.array( [[9,3,3,3,3,3,3,9],
-                         [3,1,1,1,1,1,1,3],
-                         [3,1,1,1,1,1,1,3],
-                         [3,1,1,1,1,1,1,3],
-                         [3,1,1,1,1,1,1,3],
-                         [3,1,1,1,1,1,1,3],
-                         [3,1,1,1,1,1,1,3],
-                         [9,3,3,3,3,3,3,9]])
+BOARD_SCORE = np.array( [[9,2,3,3,2,9],
+                         [2,1,1,1,1,2],
+                         [3,1,1,1,1,3],
+                         [3,1,1,1,1,3],
+                         [2,1,1,1,1,2],
+                         [9,2,3,3,2,9]])
 # ==============================================================================
 
 # ==============================================================================
@@ -160,7 +156,7 @@ def pieces_flipped( board, pos, nplayer ):
     for d in DIRECTIONS:
         ppos = pos + d
         streak = []
-        while (0<=ppos[0]<=7) and (0<=ppos[1]<=7):
+        while (0<=ppos[0]<=5) and (0<=ppos[1]<=5):
             if board[ppos[0],ppos[1]] == 3 - nplayer:
                 streak.append(+ppos)
             elif board[ppos[0],ppos[1]] == nplayer:
@@ -181,7 +177,7 @@ def main():
     """
     # ==========================================================================
     # ===== コンピュータ vs コンピュータ =======================================
-    game = Reversi( [ AI_Player( Negamax( 4 ) ), AI_Player( Negamax( 4 ) ) ] )
+    game = Reversi( [ Human_Player(), AI_Player( Negamax( 4 ) ) ] )
     # ===== ゲームをプレイする =================================================
     game.play()
     # ===== 結果を表示する =====================================================
